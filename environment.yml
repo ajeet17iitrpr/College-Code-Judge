@@ -1,0 +1,35 @@
+name: college_judge
+channels:
+  - conda-forge
+channel_priority: strict
+dependencies:
+  - python=3.11
+  - pip
+  - setuptools
+  - wheel
+  - c-compiler
+  - cxx-compiler
+  - openjdk=21
+  - bubblewrap
+  - redis-server
+  - sqlite
+  - openssl
+  - ca-certificates
+  - curl
+  - procps-ng
+  - pip:
+      - "fastapi>=0.116,<1"
+      - "uvicorn[standard]>=0.35,<1"
+      - "sqlalchemy>=2.0,<3"
+      - "pydantic>=2.11,<3"
+      - "email-validator>=2.2,<3"
+      - "python-multipart>=0.0.20,<1"
+      - "argon2-cffi>=23.1,<26"
+      - "celery[redis]>=5.5,<6"
+      - "redis>=6,<7"
+      - "psutil>=6,<8"
+      - "filelock>=3.16,<4"
+      - "jinja2>=3.1,<4"
+      - "reportlab>=4.2,<5"
+      - "httpx>=0.28,<1"
+      - "pytest>=8,<9"

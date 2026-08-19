@@ -1,0 +1,9 @@
+.env
+logs/
+run/
+data/
+backups/
+reports/
+*.zip
+*.tar.gz
+celerybeat-schedule.*
