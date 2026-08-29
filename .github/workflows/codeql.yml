@@ -13,11 +13,7 @@ name: "CodeQL Advanced"
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '27 12 * * 3'
+    branches: [ "pranjalx404-patch-1" ] # Replace with your exact branch name
 
 jobs:
   analyze:
