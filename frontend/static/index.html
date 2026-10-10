@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,19 +8,30 @@
   <title>College Code Judge</title>
   <link rel="stylesheet" href="/static/styles.css">
   <script defer src="/static/reference-data.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/diff@5.0.0/dist/diff.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
   <script defer src="/static/app.js"></script>
 </head>
+
 <body>
   <header class="topbar no-print">
-    <a class="brand" href="#/problems"><span class="brand-mark">&lt;/&gt;</span><span><strong>College Code Judge</strong><small>Secure lab evaluation</small></span></a>
+    <a class="brand" href="#/problems"><span class="brand-mark">&lt;/&gt;</span><span><strong>College Code
+          Judge</strong><small>Secure lab evaluation</small></span></a>
     <div class="top-actions">
       <button id="theme-toggle" class="icon-btn" type="button" title="Toggle light/dark mode">◐</button>
       <button id="menu-button" class="icon-btn menu-only" type="button">☰</button>
       <nav id="main-nav" class="main-nav"></nav>
     </div>
   </header>
-  <main id="app" class="app-shell" tabindex="-1"><section class="card"><p>Loading…</p></section></main>
+  <main id="app" class="app-shell" tabindex="-1">
+    <section class="card">
+      <p>Loading…</p>
+    </section>
+  </main>
   <div id="toast-region" class="toast-region no-print" aria-live="polite"></div>
-  <dialog id="modal" class="modal"><div id="modal-content"></div></dialog>
+  <dialog id="modal" class="modal">
+    <div id="modal-content"></div>
+  </dialog>
 </body>
+
 </html>

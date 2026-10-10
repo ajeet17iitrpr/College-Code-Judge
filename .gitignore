@@ -7,3 +7,7 @@ reports/
 *.zip
 *.tar.gz
 celerybeat-schedule.*
+
+__pycache__/
+*.pyc
+patch_appjs.py
