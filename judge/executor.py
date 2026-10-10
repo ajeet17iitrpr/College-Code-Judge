@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-from .checker import outputs_match
+from .checker import outputs_match, sanitize_compiler_message
 from .config import settings
 from .sandbox import ProcessResult, run_limited, sandbox_available
 
@@ -85,8 +85,13 @@ LANGUAGE_FILES = {
 
 
 def _sanitize(message: str, limit: int = 32768) -> str:
+    """Basic sanitization for non-compiler output (stdout/stderr)."""
+    if not message:
+        return ""
     cleaned = message.replace("\x00", "")
-    return cleaned[:limit]
+    if len(cleaned) > limit:
+        return cleaned[:limit] + "\n...[OUTPUT TRUNCATED: Exceeded size limit]"
+    return cleaned
 
 
 def _compile_command(language: str) -> list[str]:
@@ -168,20 +173,24 @@ def _run_command(language: str, memory_limit_mb: int) -> list[str]:
 
 
 def _compile_verdict(result: ProcessResult) -> tuple[str | None, str]:
+    """Determine compilation verdict and return a sanitized, student-safe message."""
     if result.system_error:
         return "SE", "Secure compilation sandbox failed."
     if result.timed_out:
-        return "CE", "Compilation exceeded the allowed time."
+        return "CE", "Compilation exceeded the allowed time (20 s). Check for huge generated source."
     if result.memory_limited:
-        return "CE", "Compilation exceeded the allowed memory."
+        return "CE", "Compilation exceeded the allowed memory. Simplify the source."
     if result.output_limited:
-        return "CE", "Compiler output exceeded the allowed size."
+        return "CE", "Compiler output exceeded the allowed size. Too many errors?"
     if result.process_limited:
         return "CE", "Compilation created too many processes."
     if result.return_code != 0:
-        message = result.stderr or result.stdout or "Compilation failed."
-        return "CE", _sanitize(message)
-    warnings = _sanitize(result.stderr or result.stdout)
+        # Strip /workspace/ sandbox paths so students see clean filenames
+        raw = result.stderr or result.stdout or "Compilation failed."
+        message = sanitize_compiler_message(raw)
+        return "CE", message
+    # Successful compile — pass through warnings but sanitize paths
+    warnings = sanitize_compiler_message(result.stderr or result.stdout or "")
     return None, warnings
 
 

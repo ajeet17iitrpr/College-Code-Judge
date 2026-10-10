@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import math
 import os
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import signal
 import subprocess
 import sys
@@ -11,7 +14,10 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-import psutil
+try:
+    import psutil
+except ImportError:
+    psutil = None
 
 from .config import settings
 
@@ -200,7 +206,10 @@ def build_sandbox_command(workspace: Path, inner_command: list[str]) -> list[str
 
 
 def _apply_rlimits(memory_mb: int, cpu_limit_ms: int, output_limit: int, enforce_address_space: bool = True) -> None:
-    os.setsid()
+    if hasattr(os, "setsid"):
+        os.setsid()
+    if resource is None:
+        return
     cpu_seconds = max(1, math.ceil(cpu_limit_ms / 1000))
     resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds + 1))
     if enforce_address_space:
@@ -213,12 +222,19 @@ def _apply_rlimits(memory_mb: int, cpu_limit_ms: int, output_limit: int, enforce
 
 def _kill_process_group(pid: int) -> None:
     try:
-        os.killpg(pid, signal.SIGKILL)
+        if hasattr(os, "killpg"):
+            os.killpg(pid, signal.SIGKILL)
+        else:
+            os.kill(pid, signal.SIGTERM)
     except ProcessLookupError:
         return
+    except OSError:
+        pass
 
 
 def _tree_usage(pid: int) -> tuple[int, int]:
+    if psutil is None:
+        return 0, 0
     try:
         root = psutil.Process(pid)
         processes = [root, *root.children(recursive=True)]

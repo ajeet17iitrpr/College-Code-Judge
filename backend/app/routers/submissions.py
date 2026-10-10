@@ -28,6 +28,9 @@ def access_submission(submission_id: str, auth: AuthContext, db: Session) -> Sub
 
 
 def submission_summary(item: Submission) -> dict:
+    exec_time = None
+    if item.started_at and item.finished_at:
+        exec_time = int((item.finished_at - item.started_at).total_seconds() * 1000)
     return {
         "id": item.id,
         "problem_id": item.problem_id,
@@ -41,6 +44,7 @@ def submission_summary(item: Submission) -> dict:
         "final_score": item.final_score,
         "official": item.official,
         "created_at": item.created_at.isoformat() + "Z",
+        "execution_time_ms": exec_time,
     }
 
 
